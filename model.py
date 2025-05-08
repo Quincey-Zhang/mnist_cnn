@@ -8,14 +8,14 @@ class CNN(nn.Module):
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)  # for 28*28 to 14*14
+            nn.MaxPool2d(kernel_size=2)  # from 28*28 to 14*14
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=(3, 3), stride=(1, 1), padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)  # for 14*14 to 7*7
+            nn.MaxPool2d(kernel_size=2)  # from 14*14 to 7*7
         )
-        self.output = nn.Linear(32 * 7 * 7, 10)
+        self.output = nn.Linear(in_features=32 * 7 * 7, out_features=10)
 
     def forward(self, x):
         out = self.conv1(x)

@@ -8,8 +8,8 @@ from model import CNN
 
 
 DOWNLOAD_MNIST = False  # if need to download data, set True at first time
-BATCH_SIZE = 50
-EPOCH = 5
+BATCH_SIZE = 1024
+EPOCH = 10
 LR = 1e-3
 
 
@@ -19,13 +19,13 @@ LR = 1e-3
 train_data = torchvision.datasets.MNIST(
     root='./data', train=True, download=DOWNLOAD_MNIST, transform=torchvision.transforms.ToTensor())
 print()
-print("size of train_data.train_data:  {}".format(train_data.train_data.size()))  # train_data.train_data is a Tensor
-print("size of train_data.train_labels:  {}".format(train_data.train_labels.size()), '\n')
+print(f'size of train_data.train_data:  {train_data.train_data.size()}')  # train_data.train_data is a Tensor
+print(f'size of train_data.train_labels:  {train_data.train_labels.size()}', '\n')
 
 # plot one example
-idx_example = 10
+idx_example = 57
 plt.imshow(train_data.train_data[idx_example].numpy(), cmap='Greys')
-plt.title('{}'.format(train_data.train_labels[idx_example]))
+plt.title(f'{train_data.train_labels[idx_example]}')
 # plt.show()
 
 # data loader
@@ -46,9 +46,9 @@ test_over_y = test_data.test_labels[-num_test_over:]
 """ train """
 
 cnn = CNN()
-print("CNN model structure:\n")
+print('CNN model structure:', '\n')
 print(cnn, '\n')
-optimizer = torch.optim.Adam(params=cnn.parameters(), lr=LR)  # optimizer: Adam
+optimizer = torch.optim.Adam(params=cnn.parameters(), lr=LR)  # optimiser: Adam
 loss_func = nn.CrossEntropyLoss()  # loss function: cross entropy
 
 for epoch in range(EPOCH):
@@ -56,13 +56,13 @@ for epoch in range(EPOCH):
         output = cnn(x)
         loss = loss_func(output, y)
 
-        # optimize
+        # optimise
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        # test at each 50 steps
-        if not step % 50:
+        # test at each 100 steps
+        if not step % 100:
             test_output = cnn(test_x)
             predict_y = torch.max(test_output, 1)[1].data.numpy()
             accuracy = float((predict_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
@@ -84,7 +84,9 @@ cnn_ = torch.load('cnn.pt', weights_only=False)
 # test new data
 test_output = cnn_(test_over_x)
 predict_y = torch.max(test_output, 1)[1].data.numpy()
-print("prediction number:  {}".format(predict_y))
-print("real number:  {}".format(test_over_y.numpy()), '\n')
+print('prediction number:')
+print(predict_y, '\n')
+print('real number:')
+print(test_over_y.numpy(), '\n')
 accuracy = float((predict_y == test_over_y.data.numpy()).astype(int).sum()) / float(test_over_y.size(0))
-print("accuracy:  {}".format(accuracy), '\n')
+print(f'accuracy:  {accuracy}', '\n')
